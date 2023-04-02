@@ -1,0 +1,65 @@
+stages:
+  - build
+  - deploy
+  - release
+
+test:
+  image: node:alpine
+  stage: build
+  script:
+    - yarn install
+    - yarn lint
+    - yarn build
+
+release-data:
+  needs: ["test"]
+  dependencies:
+    - deploy
+  image: php
+  stage: release
+  rules:
+    - if: $CI_COMMIT_BRANCH != 'main'
+      when: manual
+    - if: $CI_COMMIT_BRANCH == 'main'
+      when: always
+  allow_failure: true
+  before_script:
+    - apt-get update
+    - apt-get -y install git curl
+    - git config --global user.email "$GITLAB_USER_EMAIL"
+    - git config --global user.name "$GITLAB_USER_NAME"
+    - git config --global http.sslVerify false
+  script:
+    - git clone https://${GITLAB_USER}:${GITLAB_PASSWD}@git.kyrium.space/${CI_PROJECT_PATH}
+    - mkdir output
+    - VERSIONRAW="$(php -r "echo json_decode(file_get_contents('./package.json'), true)['version'];")"
+    - echo "$VERSIONRAW" > output/VERSIONRAW.txt;
+    - echo "$VERSIONRAW.build-$CI_PIPELINE_IID" > output/VERSION.txt;
+    - cp ./public/changelogs/$VERSIONRAW.md output/DESC.txt;
+    - git --version
+  artifacts:
+    paths: [
+      "output/",
+      "./release.sha"
+    ]
+
+release:
+  stage: release
+  dependencies:
+    - release-data
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs: ["release-data"]
+  before_script:
+    - apk --no-cache add openssl ca-certificates
+    - mkdir -p /usr/local/share/ca-certificates/extra
+    - openssl s_client -connect ${CI_SERVER_HOST}:${CI_SERVER_PORT} -servername ${CI_SERVER_HOST} -showcerts </dev/null 2>/dev/null | sed -e '/-----BEGIN/,/-----END/!d' | tee "/usr/local/share/ca-certificates/${CI_SERVER_HOST}.crt" >/dev/null
+    - update-ca-certificates
+  script:
+    - VERSIONRAW="$(cat output/VERSIONRAW.txt)" $VERSION
+    - VERSION="$(cat output/VERSION.txt)" $VERSION
+    - DESC="$(cat output/DESC.txt)"
+  release:
+    tag_name: '$(cat output/VERSIONRAW.txt)'
+    name: '$(cat output/VERSION.txt)'
+    description: '$(cat output/DESC.txt)'
+    ref: '$CI_COMMIT_SHA'
