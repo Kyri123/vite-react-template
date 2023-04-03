@@ -21,9 +21,37 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "import", "jsx-a11y", "react-hooks"],
+  "plugins": [
+    "react",
+    "import",
+    "jsx-a11y",
+    "react-hooks"
+  ],
   "rules": {
-    "prefer-const": "off",
+    "array-element-newline": [
+      "error",
+      {
+        "ArrayExpression": "consistent",
+        "ArrayPattern": {
+          "minItems": 5
+        }
+      }
+    ],
+    "keyword-spacing": [
+      "error",
+      {
+        "before": true
+      }
+    ],
+    "space-before-blocks": [
+      "warn",
+      "always"
+    ],
+    "react/jsx-curly-spacing": [
+      "warn",
+      "always"
+    ],
+    "prefer-const": "warn",
     "no-control-regex": "off",
     "no-empty": "off",
     "no-var": "off",
@@ -44,7 +72,6 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn"
   }
