@@ -28,6 +28,10 @@
     "react-hooks"
   ],
   "rules": {
+    "semi-style": [
+      "error",
+      "last"
+    ],
     "array-element-newline": [
       "error",
       {
