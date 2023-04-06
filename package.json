@@ -8,7 +8,7 @@
     "build": "yarn build.lint && yarn build.tailwind && yarn build.vite",
     "build.lint": "eslint src --fix",
     "build.tailwind": "postcss src/tailwind.css -o src/CSS/TW.css",
-    "build.vite": "eslint src --fix"
+    "build.vite": "vite build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
