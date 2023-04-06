@@ -5,8 +5,12 @@ function App() {
 
 	return (
 		<div className="App">
-			<div></div>
-			<h1>Vite + React</h1>
+			<div className="bg-sky-300 p-5">
+				<span className="text-sky-50">
+					Example
+				</span>
+			</div>
+			<h1>Vite + React + Tailwind + Boostrap-React</h1>
 			<div className="card">
 				<button
 					onClick={ () =>

@@ -32,15 +32,7 @@
       "error",
       "last"
     ],
-    "array-element-newline": [
-      "error",
-      {
-        "ArrayExpression": "consistent",
-        "ArrayPattern": {
-          "minItems": 5
-        }
-      }
-    ],
+    "array-element-newline": "off",
     "keyword-spacing": [
       "error",
       {
@@ -48,10 +40,6 @@
       }
     ],
     "space-before-blocks": [
-      "warn",
-      "always"
-    ],
-    "react/jsx-curly-spacing": [
       "warn",
       "always"
     ],
